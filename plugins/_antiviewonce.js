@@ -3,7 +3,7 @@ export async function before(m) {
     //if (!m.isGroup) return false;
 
     // Depuración para verificar todo el contenido del mensaje
-    console.log("Contenido del mensaje:", JSON.stringify(m.mtype, null, 2));
+    console.log(m.mtype);
 
     if (m.mtype === "imageMessage") {
         const imageMessage = m.message.imageMessage;
