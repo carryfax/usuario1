@@ -1,6 +1,8 @@
 let WAMessageStubType = (await import(global.baileys)).default
 export async function before(m, { conn, participants, groupMetadata }) {
 
+console.log(groupMetadata)
+
 console.log({ messageStubType: m.messageStubType,
 messageStubParameters: m.messageStubParameters,
 type: WAMessageStubType[m.messageStubType], 
@@ -29,16 +31,19 @@ let pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => gataMenu)
 await conn.sendMessage(m.chat, { image: { url: pp }, caption: foto, mentions: [m.sender] })
 
 } else if (m.messageStubType === 23) { // Nuevo enlace del grupo
-await conn.sendMessage(m.chat, { text: newlink, mentions: [m.sender] }, { quoted: fkontak })    
+await conn.sendMessage(m.chat, { text: newlink, mentions: [m.sender] })    
 
-} else if (m.messageStubType === 25) {
-await conn.sendMessage(m.chat, { text: edit, mentions: [m.sender] }, { quoted: fkontak })  
+} else if (m.messageStubType === 25) { // Permitir o no configurar el grupo [on/off]
+await conn.sendMessage(m.chat, { text: edit, mentions: [m.sender] })  
 	
-} else if (m.messageStubType === 26) {
-await conn.sendMessage(m.chat, { text: status, mentions: [m.sender] }, { quoted: fkontak })  
+} else if (m.messageStubType === 26) { // Cerrar o abrir grupo [on/off]
+await conn.sendMessage(m.chat, { text: status, mentions: [m.sender] })  
 
-} else if (m.messageStubType == 29) {
-await conn.sendMessage(m.chat, { text: admingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }, { quoted: fkontak }) 
+} else if (m.messageStubType == 29) { // Detectar nuevo admin
+await conn.sendMessage(m.chat, { text: admingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }) 
+
+} else if (m.messageStubType === 30) { // Detectar revocación de admin
+await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }) 
 	
 } else if (m.messageStubType === 172 && m.messageStubParameters.length > 0) {
 const rawUser = m.messageStubParameters[0]
@@ -65,10 +70,7 @@ await conn.groupRequestParticipantsUpdate(m.chat, [rawUser], 'approve');
 console.log(`Solicitud de ingreso de @${users} aprobada automáticamente ya que #antifake está desactivado.`);
 } catch (error) {
 console.error(`Error al aprobar la solicitud de ${usersConPrefijo}:`, error);
-}}
-	
-} else if (m.messageStubType === 30) {
-await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }, { quoted: fkontak })  
+}} 
 
 } else if (m.messageStubType === 145) {
 let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
