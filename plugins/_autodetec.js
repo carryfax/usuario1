@@ -1,7 +1,12 @@
 let WAMessageStubType = (await import(global.baileys)).default
 
 export async function before(m, { conn, participants, groupMetadata }) {
-	console.log({ messageStubType: m.messageStubType,
+if (m.messageStubType === 21) {
+console.log('correcto')
+}
+
+	
+console.log({ messageStubType: m.messageStubType,
 messageStubParameters: m.messageStubParameters,
 type: WAMessageStubType[m.messageStubType], 
 })
