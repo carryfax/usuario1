@@ -1,8 +1,8 @@
 import { downloadContentFromMessage } from "@whiskeysockets/baileys";
 
 export async function before(m) {
-    if (m.isBaileys && m.fromMe) return true;
-    if (!m.isGroup) return false;
+    //if (m.isBaileys && m.fromMe) return true;
+    //if (!m.isGroup) return false;
 
     let msg = null;
 console.log(m.quoted.mediaMessage.imageMessage?.viewOnce)
