@@ -532,8 +532,8 @@ conn.spromote = lenguajeGB['smsSpromote']()
 conn.sdemote = lenguajeGB['smsSdemote']() 
 conn.sDesc = lenguajeGB['smsSdesc']() 
 conn.sSubject = lenguajeGB['smsSsubject']() 
-conn.sIcon = lenguajeGB['smsSicon']() 
-conn.sRevoke = lenguajeGB['smsSrevoke']() 
+//conn.sIcon = lenguajeGB['smsSicon']() 
+//conn.sRevoke = lenguajeGB['smsSrevoke']() 
 
 conn.handler = handler.handler.bind(global.conn);
 conn.participantsUpdate = handler.participantsUpdate.bind(global.conn);
