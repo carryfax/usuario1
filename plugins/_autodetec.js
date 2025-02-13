@@ -1,14 +1,15 @@
 let WAMessageStubType = (await import(global.baileys)).default
 
-export async function before(m, { conn, participants, groupMetadata }) {	
-if (!m.messageStubType || !m.isGroup || !chat.detect) return
-	
-const fkontak = { "key": { "participants":"0@s.whatsapp.net", "remoteJid": "status@broadcast", "fromMe": false, "id": "Halo" }, "message": { "contactMessage": { "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD` }}, "participant": "0@s.whatsapp.net"}  
+export async function before(m, { conn, participants, groupMetadata }) {
 let chat = global.db.data.chats[m.chat]
 let usuario = `@${m.sender.split`@`[0]}`
 let inf = lenguajeGB['smsAvisoIIG']()
-//let pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => null) || './src/grupos.jpg'  
+	
+if (!m.messageStubType || !m.isGroup || !chat.detect) return
+	
+const fkontak = { "key": { "participants":"0@s.whatsapp.net", "remoteJid": "status@broadcast", "fromMe": false, "id": "Halo" }, "message": { "contactMessage": { "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD` }}, "participant": "0@s.whatsapp.net"}  
 let pp = await conn.profilePictureUrl(m.messageStubParameters[0], 'image').catch(_ => gataMenu)
+//let pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => null) || './src/grupos.jpg'  
 
 let nombre, foto, edit, newlink, status, admingp, noadmingp
 nombre = lenguajeGB.smsAutodetec1(inf, usuario, m)
