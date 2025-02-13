@@ -30,6 +30,7 @@ await conn.sendMessage(m.chat, { text: nombre, mentions: [m.sender] }, { quoted:
 let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
 let mensaje = `🔔 *Modo de aprobación para unirse al grupo ha sido ${status}.*`
 await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
+console.log(mensaje)
   
 } else if (chat.detect && m.messageStubType == 22) {
 await conn.sendMessage(m.chat, { image: { url: pp }, caption: foto, mentions: [m.sender] }, { quoted: fkontak })
