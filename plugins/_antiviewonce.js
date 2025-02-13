@@ -13,7 +13,7 @@ handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
   if (m.messageStubParameters && m.messageStubParameters[1]) {
     let messageData = JSON.parse(m.messageStubParameters[1]) // Convierte el JSON en un objeto
     let messageContent = messageData.content[0] // El contenido del mensaje
-
+console.log(messageContent)
     // Si el mensaje tiene el tipo "view_once", lo procesamos
     if (messageContent && messageContent.tag === "unavailable" && messageContent.attrs.type === "view_once") {
       let msgType = messageData.content[1].tag // Determina el tipo de mensaje (imagen, video, audio)
