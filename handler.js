@@ -551,9 +551,8 @@ let msg = this.serializeM(this.loadMessage(id))
 let chat = global.db.data.chats[msg?.chat] || {}
 if (!chat?.delete) return 
 if (!msg) return 
-let isGroup = remoteJid.endsWith('@g.us')
-let isPrivate = !isGroup && remoteJid.endsWith('@s.whatsapp.net')
-if (!isGroup && !isPrivate) return
+let isGP = remoteJid.endsWith('@g.us') || remoteJid.endsWith('@s.whatsapp.net')
+if (!isGP) return
 let userDelete = `${participant.split`@`[0]}`
 await this.sendMessage(msg.chat, { text: lenguajeGB['smsAntiEliminar'](userDelete).trim(), mentions: [participant] }, { quoted: msg })
 this.copyNForward(msg.chat, msg).catch(e => console.log(e, msg))
