@@ -114,8 +114,8 @@ await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.
 //await conn.sendMessage(m.chat, { text: 'Se ha activado el modo de aprobación para unirse al grupo.', mentions: [m.sender] })
 
 } else {
-//console.log({ messageStubType: m.messageStubType,
-//messageStubParameters: m.messageStubParameters,
-//type: WAMessageStubType[m.messageStubType], 
-//})
+console.log({ messageStubType: m.messageStubType,
+messageStubParameters: m.messageStubParameters,
+type: WAMessageStubType[m.messageStubType], 
+})
 }}
