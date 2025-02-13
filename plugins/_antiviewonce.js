@@ -1,68 +1,35 @@
-import { downloadContentFromMessage } from "@whiskeysockets/baileys";
+let { downloadContentFromMessage } = (await import('@whiskeysockets/baileys'))
 
-export async function before(m) {
-    if (m.isBaileys && m.fromMe) return true;
-    if (!m.isGroup) return false;
-
-    let msg = null;
-
-    // ✅ Verificar si el mensaje tiene la propiedad "viewOnce" en el mensaje
-    if (m.message && m.message.viewOnceMessage && m.message.viewOnceMessage.message) {
-        msg = m.message.viewOnceMessage.message;
-    }
-
-    // ❌ Si no hay un mensaje "ver una vez", salir
-    if (!msg) {
-        return console.log("⛔ No es un mensaje de 'ver una vez'.");
-    }
-
-    try {
-        const mediaType = Object.keys(msg)[0]; // "imageMessage" o "videoMessage"
-        if (!mediaType) return console.log("⛔ Tipo de media no detectado");
-
-        const media = msg[mediaType];
-        if (!media.viewOnce) return console.log("⛔ No es un mensaje de 'ver una vez'.");
-
-        const type = mediaType.includes("image") ? "image" : mediaType.includes("video") ? "video" : null;
-        if (!type) return console.log("⛔ Tipo de archivo no soportado");
-
-        console.log(`📥 Descargando ${type}...`);
-        const stream = await downloadContentFromMessage(media, type);
-        let buffer = Buffer.from([]);
-        for await (const chunk of stream) {
-            buffer = Buffer.concat([buffer, chunk]);
-        }
-
-        const fileSize = formatFileSize(media.fileLength);
-        const timestamp = getMakassarTimestamp(media.mediaKeyTimestamp);
-        const description = `🚫 *Anti-ViewOnce*\n📁 *Tipo:* ${type}\n📝 *Caption:* ${media.caption || "N/A"}\n📏 *Tamaño:* ${fileSize}\n⏰ *Hora:* ${timestamp}\n👤 *Enviado por:* @${m.sender.split("@")[0]}`;
-
-        // ✅ Enviar la imagen o video recuperado
-        if (type === "image") {
-            await this.sendFile(m.chat, buffer, "image.jpg", description, m, false, { mentions: [m.sender] });
-        } else if (type === "video") {
-            await this.sendFile(m.chat, buffer, "video.mp4", description, m, false, { mentions: [m.sender] });
-        }
-
-        console.log(`✅ ${type} enviado con éxito.`);
-    } catch (error) {
-        console.error("❌ Error al procesar el mensaje de 'ver una vez':", error);
-    }
+let handler = m => m
+handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
+let media, msg, type
+//const { antiver, isBanned } = global.db.data.chats[m.chat]
+//if (!antiver || isBanned || !(m.mtype == 'viewOnceMessageV2' || m.mtype == 'viewOnceMessageV2Extension')) return
+if (m.mtype == 'viewOnceMessageV2' || m.mtype == 'viewOnceMessageV2Extension') {
+msg = m.mtype == 'viewOnceMessageV2' ? m.message.viewOnceMessageV2.message : m.message.viewOnceMessageV2Extension.message 
+type = Object.keys(msg)[0]
+if (m.mtype == 'viewOnceMessageV2') {
+media = await downloadContentFromMessage(msg[type], type == 'imageMessage' ? 'image' : 'videoMessage' ? 'video' : 'audio')
+} else {
+media = await downloadContentFromMessage(msg[type], 'audio')
 }
+let buffer = Buffer.from([])
+for await (const chunk of media) {
+buffer = Buffer.concat([buffer, chunk])}
+const fileSize = formatFileSize(msg[type].fileLength)
+const description = `
+✅️ *ANTI VER UNA VEZ* ✅️\n\n💭 *No ocultes* ${type === 'imageMessage' ? '`Imagen` 📷' : type === 'videoMessage' ? '`Vídeo` 🎥' : type === 'audioMessage' ? '`Mensaje de voz` 🎤' : 'este mensaje'}\n- ✨️ *Usuario:* *@${m.sender.split('@')[0]}*
+${msg[type].caption ? `- *Texto:* ${msg[type].caption}` : ''}`.trim()
+if (/image|video/.test(type)) return await conn.sendFile(m.chat, buffer, type == 'imageMessage' ? 'error.jpg' : 'error.mp4', description, m, false, { mentions: [m.sender] })
+if (/audio/.test(type)) { 
+await conn.reply(m.chat, description, m, { mentions: [m.sender] }) 
+await conn.sendMessage(m.chat, { audio: buffer, fileName: 'error.mp3', mimetype: 'audio/mpeg', ptt: true }, { quoted: m })
+}
+}}
+export default handler
 
-// 📏 Función para formatear el tamaño del archivo
 function formatFileSize(bytes) {
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-    return (
-        Math.round((bytes / Math.pow(1024, i)) * 100) / 100 +
-        " " +
-        ["Bytes", "KB", "MB", "GB", "TB", "PB", "TY", "EY"][i]
-    );
-}
-
-// ⏰ Función para convertir timestamp a formato legible
-function getMakassarTimestamp(timestamp) {
-    return new Date(1e3 * timestamp).toLocaleString("es-ES", {
-        timeZone: "America/Guayaquil",
-    });
+const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'TY', 'EY']
+const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+return Math.round(100 * (bytes / Math.pow(1024, i))) / 100 + ' ' + sizes[i]
 }
