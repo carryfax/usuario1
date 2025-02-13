@@ -3,6 +3,7 @@ import { downloadContentFromMessage } from "@whiskeysockets/baileys"
 export async function before(m, { isAdmin, isBotAdmin }) {
 //let chat = db.data.chats[m.chat]
 //if (!chat.antiver || chat.isBanned) return
+console.log(m)
 if (m.mtype == 'viewOnceMessageV2' || m.mtype.hasOwnProperty("viewOnce")) {
 let msg = m.message.viewOnceMessageV2.message
 let type = Object.keys(msg)[0]
