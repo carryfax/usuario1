@@ -1,5 +1,5 @@
 import { downloadContentFromMessage } from "@whiskeysockets/baileys";
-
+let handler = m => m
 handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
     //if (m.isBaileys && m.fromMe) return true;
     //if (!m.isGroup) return false;
