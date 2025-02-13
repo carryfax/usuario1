@@ -111,7 +111,6 @@ console.log(`Solicitud de ingreso de @${users} aprobada automáticamente ya que 
 } catch (error) {
 console.error(`Error al aprobar la solicitud de ${usersConPrefijo}:`, error);
 }}
-return;
 	
 } if (chat.detect && m.messageStubType == 30) {
 await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }, { quoted: fkontak })  
