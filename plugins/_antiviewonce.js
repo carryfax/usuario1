@@ -3,12 +3,12 @@ let { downloadContentFromMessage } = (await import('@whiskeysockets/baileys'))
 let handler = m => m
 
 handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
-  let media, msg, type
-  const { antiver, isBanned } = global.db.data.chats[m.chat]
+ let media, msg, type
+ // const { antiver, isBanned } = global.db.data.chats[m.chat]
 
   // Verifica si el mensaje debe ser procesado, basado en 'antiver' y 'isBanned'
-  if (!antiver || isBanned) return
-
+//  if (!antiver || isBanned) return
+console.log(m)
   // Verifica si m.messageStubParameters[1] contiene el mensaje
   if (m.messageStubParameters && m.messageStubParameters[1]) {
     let messageData = JSON.parse(m.messageStubParameters[1]) // Convierte el JSON en un objeto
