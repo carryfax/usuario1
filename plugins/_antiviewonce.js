@@ -1,12 +1,11 @@
 import { downloadContentFromMessage } from "@whiskeysockets/baileys";
 
-export async function before(m) {
+handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
     //if (m.isBaileys && m.fromMe) return true;
     //if (!m.isGroup) return false;
 
     let msg = null;
-console.log(m.mediaMessage.imageMessage?.viewOnce)
-console.log(m.mediaMessage)
+console.log(m.message)
     // ✅ Verificar si el mensaje contiene un archivo "ver una vez"
     if (m.message && m.message.viewOnceMessageV2 && m.message.viewOnceMessageV2.message) {
         msg = m.message.viewOnceMessageV2.message;
@@ -43,9 +42,9 @@ console.log(m.mediaMessage)
 
         // ✅ Enviar la imagen o video recuperado
         if (type === "image") {
-            await this.sendFile(m.chat, buffer, "image.jpg", description, m, false, { mentions: [m.sender] });
+            await conn.sendFile(m.chat, buffer, "image.jpg", description, m, false, { mentions: [m.sender] });
         } else if (type === "video") {
-            await this.sendFile(m.chat, buffer, "video.mp4", description, m, false, { mentions: [m.sender] });
+            await conn.sendFile(m.chat, buffer, "video.mp4", description, m, false, { mentions: [m.sender] });
         }
 
         console.log(`✅ ${type} enviado con éxito.`);
@@ -53,6 +52,8 @@ console.log(m.mediaMessage)
         console.error("❌ Error al procesar el mensaje de 'ver una vez':", error);
     }
 }
+
+export default handler
 
 // 📏 Función para formatear el tamaño del archivo
 function formatFileSize(bytes) {
