@@ -11,7 +11,7 @@ handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
 
     // Extraer el mensaje de una sola vista
     let msg, type;
-    console.log(m.mtype)
+    m.reply(m.mtype)
     if (m.mtype === 'viewOnceMessageV2' || m.mtype === 'viewOnceMessageV2Extension') {
         msg = m.message.viewOnceMessageV2?.message || m.message.viewOnceMessageV2Extension?.message;
     }
