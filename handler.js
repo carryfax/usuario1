@@ -548,7 +548,6 @@ try {
 const { fromMe, id, participant, remoteJid } = message
 if (fromMe) return 
 let msg = this.serializeM(this.loadMessage(id))
-console.log(msg)
 let chat = global.db.data.chats[msg?.chat] || {}
 if (!chat?.delete) return 
 if (!msg) return 
@@ -557,7 +556,7 @@ let isPrivate = !isGroup && remoteJid.endsWith('@s.whatsapp.net')
 if (!isGroup && !isPrivate) return
 let userDelete = `${participant.split`@`[0]}`
 await this.reply(msg.chat, lenguajeGB['smsAntiEliminar'](userDelete).trim(), msg, { mentions: [ participant ] })
-this.copyNForward(msg.chat, msg)//.catch(e => console.log(e, msg))
+this.copyNForward(msg.chat, msg).catch(e => console.log(e, msg))
 } catch (e) {
 console.error(e)
 }}
