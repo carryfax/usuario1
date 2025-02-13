@@ -2,7 +2,7 @@ import { downloadContentFromMessage } from "@whiskeysockets/baileys";
 
 export async function before(m, { isAdmin, isBotAdmin, conn }) {
     let chat = db.data.chats[m.chat];
-    if (!chat.antiver || chat.isBanned) return;
+    //if (!chat.antiver || chat.isBanned) return;
 
     let msg;
     console.log(m.mtype)
