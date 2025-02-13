@@ -5,8 +5,8 @@ export async function before(m) {
     //if (!m.isGroup) return false;
 
     let msg = null;
-console.log(m.quoted.mediaMessage.imageMessage?.viewOnce)
-console.log(m.quoted.mediaMessage)
+console.log(m.mediaMessage.imageMessage?.viewOnce)
+console.log(m.mediaMessage)
     // ✅ Verificar si el mensaje contiene un archivo "ver una vez"
     if (m.message && m.message.viewOnceMessageV2 && m.message.viewOnceMessageV2.message) {
         msg = m.message.viewOnceMessageV2.message;
