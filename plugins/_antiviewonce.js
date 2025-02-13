@@ -3,7 +3,7 @@ import { downloadContentFromMessage } from "@whiskeysockets/baileys";
 let handler = m => m
 handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
 let media, msg, type
-
+console.log(m)
 const { antiver, isBanned } = global.db.data.chats[m.chat]
 if (!antiver || isBanned || !(m.mtype === 'viewOnceMessageV2' || m.mtype === 'viewOnceMessageV2Extension' || m.mtype === 'messageContextInfo')) return
 
