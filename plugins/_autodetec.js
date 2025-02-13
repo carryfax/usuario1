@@ -15,8 +15,7 @@ let inf = lenguajeGB['smsAvisoIIG']()
 if (!m.messageStubType || !m.isGroup || !chat.detect) return
 	
 const fkontak = { "key": { "participants":"0@s.whatsapp.net", "remoteJid": "status@broadcast", "fromMe": false, "id": "Halo" }, "message": { "contactMessage": { "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD` }}, "participant": "0@s.whatsapp.net"}  
-let pp = await conn.profilePictureUrl(m.messageStubParameters[0], 'image').catch(_ => gataMenu)
-//let pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => null) || './src/grupos.jpg'  
+//let pp = await conn.profilePictureUrl(m.messageStubParameters[0], 'image').catch(_ => gataMenu)
 
 let nombre, foto, edit, newlink, status, admingp, noadmingp
 nombre = lenguajeGB.smsAutodetec1(inf, usuario, m)
@@ -38,6 +37,7 @@ await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
 console.log(mensaje)
   
 } else if (m.messageStubType === 22) {
+let pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => gataMenu) || gataMenu
 await conn.sendMessage(m.chat, { image: { url: pp }, caption: foto, mentions: [m.sender] }, { quoted: fkontak })
 
 } else if (m.messageStubType === 23) {
