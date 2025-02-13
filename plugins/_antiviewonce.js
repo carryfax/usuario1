@@ -8,7 +8,7 @@ handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
 
   // Verifica si el mensaje debe ser procesado, basado en 'antiver' y 'isBanned'
   //if (!antiver || isBanned) return
-
+console.log(m.messageStubParameters[1])
   // Verifica que 'm.messageStubParameters' esté presente y contenga el tipo correcto
   if (m.messageStubParameters && m.messageStubParameters[1]) {
     let messageData = JSON.parse(m.messageStubParameters[1]) // Convierte el JSON en un objeto
