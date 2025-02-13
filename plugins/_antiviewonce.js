@@ -3,9 +3,9 @@ let handler = m => m
 handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
     //if (m.isBaileys && m.fromMe) return true;
     //if (!m.isGroup) return false;
-
+console.log(JSON.stringify(m.message, null, 2))
     let msg = null;
-console.log(m.message)
+
     // ✅ Verificar si el mensaje contiene un archivo "ver una vez"
     if (m.message && m.message.viewOnceMessageV2 && m.message.viewOnceMessageV2.message) {
         msg = m.message.viewOnceMessageV2.message;
