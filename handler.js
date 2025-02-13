@@ -554,8 +554,8 @@ if (!msg) return
 let isGP = remoteJid.endsWith('@g.us') || remoteJid.endsWith('@s.whatsapp.net')
 if (!isGP) return
 let userDelete = `${participant.split`@`[0]}`
-await this.sendMessage(msg.chat, { text: lenguajeGB['smsAntiEliminar'](userDelete).trim(), mentions: [participant] }, { quoted: msg })
-this.copyNForward(msg.chat, msg).catch(e => console.log(e, msg))
+await this.sendMessage(remoteJid, { text: lenguajeGB['smsAntiEliminar'](userDelete).trim(), mentions: [participant] }, { quoted: msg })
+this.copyNForward(remoteJid, msg).catch(e => console.log(e, msg))
 } catch (e) {
 console.error(e)
 }}
