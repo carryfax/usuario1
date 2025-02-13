@@ -26,7 +26,7 @@ admingp = lenguajeGB.smsAutodetec6(inf, m, groupMetadata, usuario)
 noadmingp = lenguajeGB.smsAutodetec7(inf, m, groupMetadata, usuario)
 
 if (m.messageStubType === 21) {
-await conn.sendMessage(m.chat, { text: nombre, mentions: [m.sender] }, { quoted: fkontak })   
+await conn.sendMessage(m.chat, { text: nombre, mentions: [m.sender] }, { quoted: null })   
 
 } else if (m.messageStubType === 145) {
 let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
