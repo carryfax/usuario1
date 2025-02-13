@@ -1,21 +1,18 @@
 import { downloadContentFromMessage } from "@whiskeysockets/baileys";
-let handler = m => m
-handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
-    //if (m.isBaileys && m.fromMe) return true;
-    //if (!m.isGroup) return false;
-console.log(JSON.stringify(m.message, null, 2))
+
+export async function before(m) {
+    if (m.isBaileys && m.fromMe) return true;
+    if (!m.isGroup) return false;
+
     let msg = null;
 
-    // ✅ Verificar si el mensaje contiene un archivo "ver una vez"
-    if (m.message && m.message.viewOnceMessageV2 && m.message.viewOnceMessageV2.message) {
-        msg = m.message.viewOnceMessageV2.message;
-    } 
-    // ✅ Verificar si el mensaje citado contiene un archivo "ver una vez"
-    else if (m.quoted && m.quoted.mediaMessage && m.quoted.mediaMessage.imageMessage?.viewOnce) {
-        msg = m.quoted.mediaMessage;
-    } 
-    // ❌ Si no es un mensaje "ver una vez", salir
-    else {
+    // ✅ Verificar si el mensaje tiene la propiedad "viewOnce" en el mensaje
+    if (m.message && m.message.viewOnceMessage && m.message.viewOnceMessage.message) {
+        msg = m.message.viewOnceMessage.message;
+    }
+
+    // ❌ Si no hay un mensaje "ver una vez", salir
+    if (!msg) {
         return console.log("⛔ No es un mensaje de 'ver una vez'.");
     }
 
@@ -42,9 +39,9 @@ console.log(JSON.stringify(m.message, null, 2))
 
         // ✅ Enviar la imagen o video recuperado
         if (type === "image") {
-            await conn.sendFile(m.chat, buffer, "image.jpg", description, m, false, { mentions: [m.sender] });
+            await this.sendFile(m.chat, buffer, "image.jpg", description, m, false, { mentions: [m.sender] });
         } else if (type === "video") {
-            await conn.sendFile(m.chat, buffer, "video.mp4", description, m, false, { mentions: [m.sender] });
+            await this.sendFile(m.chat, buffer, "video.mp4", description, m, false, { mentions: [m.sender] });
         }
 
         console.log(`✅ ${type} enviado con éxito.`);
@@ -52,8 +49,6 @@ console.log(JSON.stringify(m.message, null, 2))
         console.error("❌ Error al procesar el mensaje de 'ver una vez':", error);
     }
 }
-
-export default handler
 
 // 📏 Función para formatear el tamaño del archivo
 function formatFileSize(bytes) {
