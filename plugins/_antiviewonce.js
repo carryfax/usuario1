@@ -1,58 +1,55 @@
 import { downloadContentFromMessage } from "@whiskeysockets/baileys";
 
 export async function before(m) {
-    // Verificar si el mensaje proviene del bot para evitar loops
     if (m.isBaileys && m.fromMe) return true;
     if (!m.isGroup) return false;
 
     let msg = null;
 
-    // Caso 1: Mensaje de una sola vista directamente en `m`
-    if (m.mtype && m.msg && m.msg.hasOwnProperty("viewOnce")) {
-        msg = m.msg;
+    // ✅ Verificar si el mensaje contiene un archivo "ver una vez"
+    if (m.message && m.message.viewOnceMessageV2 && m.message.viewOnceMessageV2.message) {
+        msg = m.message.viewOnceMessageV2.message;
     } 
-    // Caso 2: Mensaje de una sola vista dentro de `m.quoted`
-    else if (m.quoted?.mediaMessage?.imageMessage || m.quoted?.mediaMessage?.videoMessage) {
-        msg = m.quoted.mediaMessage.imageMessage || m.quoted.mediaMessage.videoMessage;
+    // ✅ Verificar si el mensaje citado contiene un archivo "ver una vez"
+    else if (m.quoted && m.quoted.mediaMessage && m.quoted.mediaMessage.imageMessage?.viewOnce) {
+        msg = m.quoted.mediaMessage;
     } 
-    // Si no se encuentra un mensaje de una sola vista, salir
+    // ❌ Si no es un mensaje "ver una vez", salir
     else {
-        return console.log("⛔ No es un mensaje de una sola vista.");
+        return console.log("⛔ No es un mensaje de 'ver una vez'.");
     }
 
     try {
-        const type = msg.mimetype?.split("/")[0] || "unknown";
-        const mediaType = type === "image" ? "image" :
-                          type === "video" ? "video" :
-                          type === "audio" ? "audio" : null;
+        const mediaType = Object.keys(msg)[0]; // "imageMessage" o "videoMessage"
+        if (!mediaType) return console.log("⛔ Tipo de media no detectado");
 
-        if (!mediaType) return console.log("⛔ Tipo de media no soportado:", type);
+        const media = msg[mediaType];
+        if (!media.viewOnce) return console.log("⛔ No es un mensaje de 'ver una vez'.");
 
-        // 📥 Descargar contenido
-        console.log(`📥 Descargando ${mediaType}...`);
-        const media = await downloadContentFromMessage(msg, mediaType);
+        const type = mediaType.includes("image") ? "image" : mediaType.includes("video") ? "video" : null;
+        if (!type) return console.log("⛔ Tipo de archivo no soportado");
+
+        console.log(`📥 Descargando ${type}...`);
+        const stream = await downloadContentFromMessage(media, type);
         let buffer = Buffer.from([]);
-        for await (const chunk of media) {
+        for await (const chunk of stream) {
             buffer = Buffer.concat([buffer, chunk]);
         }
 
-        // 📏 Obtener información del archivo
-        const fileSize = formatFileSize(msg.fileLength);
-        const timestamp = getMakassarTimestamp(msg.mediaKeyTimestamp);
-        const description = `🚫 *Anti-ViewOnce*\n📁 *Tipo:* ${mediaType}\n📝 *Caption:* ${msg.caption || "N/A"}\n📏 *Tamaño:* ${fileSize}\n⏰ *Hora:* ${timestamp}\n👤 *Enviado por:* @${m.sender.split("@")[0]}`;
+        const fileSize = formatFileSize(media.fileLength);
+        const timestamp = getMakassarTimestamp(media.mediaKeyTimestamp);
+        const description = `🚫 *Anti-ViewOnce*\n📁 *Tipo:* ${type}\n📝 *Caption:* ${media.caption || "N/A"}\n📏 *Tamaño:* ${fileSize}\n⏰ *Hora:* ${timestamp}\n👤 *Enviado por:* @${m.sender.split("@")[0]}`;
 
-        // 📤 Enviar el mensaje recuperado
-        if (mediaType === "image") {
+        // ✅ Enviar la imagen o video recuperado
+        if (type === "image") {
             await this.sendFile(m.chat, buffer, "image.jpg", description, m, false, { mentions: [m.sender] });
-        } else if (mediaType === "video") {
+        } else if (type === "video") {
             await this.sendFile(m.chat, buffer, "video.mp4", description, m, false, { mentions: [m.sender] });
-        } else if (mediaType === "audio") {
-            await this.sendMessage(m.chat, { audio: buffer, mimetype: "audio/mpeg", ptt: true }, { quoted: m });
         }
 
-        console.log(`✅ ${mediaType} enviado con éxito.`);
+        console.log(`✅ ${type} enviado con éxito.`);
     } catch (error) {
-        console.error("❌ Error al procesar el mensaje de una sola vista:", error);
+        console.error("❌ Error al procesar el mensaje de 'ver una vez':", error);
     }
 }
 
