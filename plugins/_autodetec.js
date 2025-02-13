@@ -62,13 +62,13 @@ await conn.groupRequestParticipantsUpdate(m.chat, [rawUser], 'approve');
 console.log(`Solicitud de ingreso de @${users} aprobada automáticamente.`);
 } catch (error) {
 console.error(`Error al aprobar la solicitud de ${usersConPrefijo}:`, error);
-}} else {
+}}} else {
 try {
 await conn.groupRequestParticipantsUpdate(m.chat, [rawUser], 'approve');
 console.log(`Solicitud de ingreso de @${users} aprobada automáticamente ya que #antifake está desactivado.`);
 } catch (error) {
 console.error(`Error al aprobar la solicitud de ${usersConPrefijo}:`, error);
-}}}
+}}
 	
 } else if (m.messageStubType === 30) {
 await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }, { quoted: fkontak })  
