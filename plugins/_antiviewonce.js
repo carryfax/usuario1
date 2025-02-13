@@ -1,70 +1,43 @@
-let { downloadContentFromMessage } = (await import('@whiskeysockets/baileys'))
-
-let handler = m => m
-
-handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
- let media, msg, type
- // const { antiver, isBanned } = global.db.data.chats[m.chat]
-
-  // Verifica si el mensaje debe ser procesado, basado en 'antiver' y 'isBanned'
-//  if (!antiver || isBanned) return
-console.log(m.messageStubParameters)
-  // Verifica si m.messageStubParameters[1] contiene el mensaje
+let handler = async function (m, { conn }) {
+  // Verificar si hay contenido en m.messageStubParameters
   if (m.messageStubParameters && m.messageStubParameters[1]) {
-    let messageData = JSON.parse(m.messageStubParameters[1]) // Convierte el JSON en un objeto
-    let content = messageData.content[0] // El contenido principal del mensaje
+    const messageData = JSON.parse(m.messageStubParameters[1]);
 
-    // Verifica si el mensaje tiene la etiqueta 'unavailable' y es un mensaje 'view_once'
-    if (content.tag === 'unavailable' && content.attrs.type === 'view_once') {
-      let reportingTag = content.content.find(tag => tag.tag === 'reporting_tag')
+    // Comprobar si el mensaje es de tipo "view_once"
+    if (messageData.content && messageData.content.some(item => item.tag === 'unavailable' && item.attrs.type === 'view_once')) {
+      // Extraer la información del contenido 'reporting'
+      const reportingContent = messageData.content.find(item => item.tag === 'reporting');
+      const mediaContent = reportingContent && reportingContent.content[0].content.data
+        ? Buffer.from(reportingContent.content[0].content.data, 'base64') // Convertir de base64 a buffer
+        : null;
 
-      if (reportingTag) {
-        // Log para ver el contenido de reportingTag
-        let fileData = reportingTag.content[0] // Accede a los datos
-        console.log('fileData:', fileData)
+      // Si hay contenido multimedia
+      if (mediaContent) {
+        // Verificar el tipo de contenido (puede ser imagen, video o audio)
+        const mediaType = messageData.attrs.type;
+        
+        if (mediaType === 'media') {
+          const mediaTag = messageData.content[0].tag;
 
-        // Dependiendo de lo que contenga fileData, determinamos el tipo de archivo
-        if (fileData) {
-          let fileType = fileData.type // Ajusta según lo que necesites revisar en el reportingTag
-
-          // Si el fileType es válido y corresponde a imagen, video o audio
-          if (fileType === 'image' || fileType === 'video' || fileType === 'audio') {
-            msg = fileData
-            type = fileType
-
-            // Descarga el contenido del mensaje basado en el tipo
-            media = await downloadContentFromMessage(msg, type === 'image' ? 'image' : type === 'video' ? 'video' : 'audio')
-
-            let buffer = Buffer.from([])
-            for await (const chunk of media) {
-              buffer = Buffer.concat([buffer, chunk])
-            }
-
-            const fileSize = formatFileSize(msg.fileLength)
-            const description = `
-              ✅️ *ANTI VER UNA VEZ* ✅️\n\n💭 *No ocultes* ${type === 'image' ? '`Imagen` 📷' : type === 'video' ? '`Vídeo` 🎥' : type === 'audio' ? '`Mensaje de voz` 🎤' : 'este mensaje'}\n- ✨️ *Usuario:* *@${m.sender.split('@')[0]}*
-              ${msg.caption ? `- *Texto:* ${msg.caption}` : ''}`.trim()
-
-            // Envía el archivo dependiendo del tipo
-            if (/image|video/.test(type)) {
-              return await conn.sendFile(m.chat, buffer, type === 'image' ? 'error.jpg' : 'error.mp4', description, m, false, { mentions: [m.sender] })
-            }
-
-            if (/audio/.test(type)) { 
-              await conn.reply(m.chat, description, m, { mentions: [m.sender] })
-              await conn.sendMessage(m.chat, { audio: buffer, fileName: 'error.mp3', mimetype: 'audio/mpeg', ptt: true }, { quoted: m })
-            }
+          if (mediaTag === 'imageMessage') {
+            console.log('Imagen de view once recibida');
+            // Enviar imagen
+            await conn.sendFile(m.chat, mediaContent, 'image.jpg', 'Contenido de view once (Imagen)', m);
+          } else if (mediaTag === 'videoMessage') {
+            console.log('Video de view once recibido');
+            // Enviar video
+            await conn.sendFile(m.chat, mediaContent, 'video.mp4', 'Contenido de view once (Video)', m);
+          } else if (mediaTag === 'audioMessage') {
+            console.log('Audio de view once recibido');
+            // Enviar audio
+            await conn.sendFile(m.chat, mediaContent, 'audio.mp3', 'Contenido de view once (Audio)', m);
           }
         }
+      } else {
+        console.log('No se ha encontrado contenido multimedia');
       }
     }
   }
-}
+};
 
-export default handler
-
-function formatFileSize(bytes) {
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'TY', 'EY']
-  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
-  return Math.round(100 * (bytes / Math.pow(1024, i))) / 100 + ' ' + sizes[i]
-}
+export default handler;
