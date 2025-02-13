@@ -555,7 +555,7 @@ let isGroup = remoteJid.endsWith('@g.us')
 let isPrivate = !isGroup && remoteJid.endsWith('@s.whatsapp.net')
 if (!isGroup && !isPrivate) return
 let userDelete = `${participant.split`@`[0]}`
-await this.reply(msg.chat, lenguajeGB['smsAntiEliminar'](userDelete).trim(), msg, { mentions: [ participant ] })
+await this.sendMessage(msg.chat, { text: lenguajeGB['smsAntiEliminar'](userDelete).trim(), mentions: [participant] }, { quoted: msg })
 this.copyNForward(msg.chat, msg).catch(e => console.log(e, msg))
 } catch (e) {
 console.error(e)
