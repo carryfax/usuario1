@@ -4,33 +4,30 @@ let handler = m => m
 
 handler.before = async function (m, { conn, isAdmin, isBotAdmin }) {
   let media, msg, type
-  //const { antiver, isBanned } = global.db.data.chats[m.chat]
+  const { antiver, isBanned } = global.db.data.chats[m.chat]
 
   // Verifica si el mensaje debe ser procesado, basado en 'antiver' y 'isBanned'
-  //if (!antiver || isBanned) return
-console.log(m.messageStubParameters[1])
-  // Verifica que 'm.messageStubParameters' esté presente y contenga el tipo correcto
+  if (!antiver || isBanned) return
+
+  // Verifica si m.messageStubParameters[1] contiene el mensaje
   if (m.messageStubParameters && m.messageStubParameters[1]) {
     let messageData = JSON.parse(m.messageStubParameters[1]) // Convierte el JSON en un objeto
-    let messageContent = messageData.content[0] // El contenido del mensaje
+    let content = messageData.content[0] // El contenido principal del mensaje
 
-    // Si el mensaje tiene el tipo "view_once", lo procesamos
-    if (messageContent) {
-      
-      // Verificamos si el contenido tiene el 'reporting_tag' para extraer más detalles
-      let reportingTag = messageContent.content.find(tag => tag.tag === 'reporting_tag')
-      
+    // Verifica si el mensaje tiene la etiqueta 'unavailable' y es un mensaje 'view_once'
+    if (content.tag === 'unavailable' && content.attrs.type === 'view_once') {
+      let reportingTag = content.content.find(tag => tag.tag === 'reporting_tag')
+
       if (reportingTag) {
-        // Aquí puedes ver qué contiene el reportingTag para determinar el tipo de archivo
-        let fileData = reportingTag.content[0] // Asumimos que los datos de la imagen/video/audio están aquí
-        // Log para ver el contenido
+        // Log para ver el contenido de reportingTag
+        let fileData = reportingTag.content[0] // Accede a los datos
         console.log('fileData:', fileData)
-        
-        // Dependiendo del contenido de fileData, determinar el tipo de archivo
+
+        // Dependiendo de lo que contenga fileData, determinamos el tipo de archivo
         if (fileData) {
-          let fileType = fileData.type // Aquí debes verificar cómo identificar el tipo de archivo, esto es solo un ejemplo.
-          
-          // Si el fileType corresponde a un archivo de imagen, video o audio
+          let fileType = fileData.type // Ajusta según lo que necesites revisar en el reportingTag
+
+          // Si el fileType es válido y corresponde a imagen, video o audio
           if (fileType === 'image' || fileType === 'video' || fileType === 'audio') {
             msg = fileData
             type = fileType
