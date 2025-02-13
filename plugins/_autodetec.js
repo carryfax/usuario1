@@ -13,6 +13,7 @@ let usuario = `@${m.sender.split`@`[0]}`
 let inf = lenguajeGB['smsAvisoIIG']()
 	
 if (!m.messageStubType || !m.isGroup || !chat.detect) return
+const botIsAdminCommunity = groupMetadata.participants.some(p => p.id === conn.user.jid && (p.admin === 'admin' || p.admin === 'superadmin'))
 
 let nombre, foto, edit, newlink, status, admingp, noadmingp
 nombre = lenguajeGB.smsAutodetec1(inf, usuario, m)
@@ -32,6 +33,10 @@ await conn.sendMessage(m.chat, { image: { url: pp }, caption: foto, mentions: [m
 
 } else if (m.messageStubType === 23) { // Nuevo enlace del grupo
 await conn.sendMessage(m.chat, { text: newlink, mentions: [m.sender] })    
+
+} else if (m.messageStubType === 24) { // Detectar una nueva descripción 
+let mensaje = `📝 *La descripción del grupo ha sido actualizada. La nueva descripción es:*\n\n${m.messageStubParameters[0]}`
+await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
 
 } else if (m.messageStubType === 25) { // Permitir o no configurar el grupo [on/off]
 await conn.sendMessage(m.chat, { text: edit, mentions: [m.sender] })  
@@ -77,6 +82,11 @@ let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
 let mensaje = `🔔 *Modo de aprobación para unirse al grupo ha sido ${status}.*`
 await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
 console.log(mensaje)
+
+// Para comunidades
+} else if (m.messageStubType === 171 && botIsAdminCommunity && groupMetadata.isCommunityAnnounce) {
+let all_member_add = m.messageStubParameters[0] === 'all_member_add' ? "✅ *Todos pueden añadir usuarios a la comunidad.*" : "⚠ *Solo los administradores pueden añadir usuarios a la comunidad.*"
+await conn.sendMessage(m.chat, { text: all_member_add, mentions: [m.sender] })  
 
 } else {
 console.log({ messageStubType: m.messageStubType, messageStubParameters: m.messageStubParameters, type: WAMessageStubType[m.messageStubType] })
