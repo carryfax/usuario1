@@ -5,7 +5,7 @@ export async function before(m, { isAdmin, isBotAdmin, conn }) {
     //if (!chat.antiver || chat.isBanned) return;
 
     let msg;
-    console.log(m.message)
+    console.log(m.quoted)
     // Verificar si es un mensaje de una sola vista
     if (m.mtype === "viewOnceMessageV2" || m.mtype === "viewOnceMessageV2Extension") {
         msg = m.message.viewOnceMessageV2?.message || m.message.viewOnceMessageV2Extension?.message;
