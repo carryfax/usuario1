@@ -25,6 +25,11 @@ noadmingp = lenguajeGB.smsAutodetec7(inf, m, groupMetadata, usuario)
 
 if (chat.detect && m.messageStubType == 21) {
 await conn.sendMessage(m.chat, { text: nombre, mentions: [m.sender] }, { quoted: fkontak })   
+
+} else if (chat.detect && m.messageStubType == 145) {
+let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
+let mensaje = `🔔 *Modo de aprobación para unirse al grupo ha sido ${status}.*`
+await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
   
 } else if (chat.detect && m.messageStubType == 22) {
 await conn.sendMessage(m.chat, { image: { url: pp }, caption: foto, mentions: [m.sender] }, { quoted: fkontak })
@@ -115,10 +120,6 @@ console.error(`Error al aprobar la solicitud de ${usersConPrefijo}:`, error);
 } if (chat.detect && m.messageStubType == 30) {
 await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }, { quoted: fkontak })  
 
-} else if (chat.detect && m.messageStubType == 145) {
-let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
-let mensaje = `🔔 *Modo de aprobación para unirse al grupo ha sido ${status}.*`
-await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
 
 } else {
 console.log({ messageStubType: m.messageStubType,
