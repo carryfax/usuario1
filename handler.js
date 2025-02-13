@@ -543,23 +543,6 @@ let callmsg = await this.reply(nk.from, lenguajeGB['smsHandlerLlamar'](tagUserL,
 await this.updateBlockStatus(nk.from, 'block')
 }}}}
 
-/*export async function deleteUpdate(message) {
-try {
-const { fromMe, id, participant, remoteJid } = message
-if (fromMe) return 
-let msg = this.serializeM(this.loadMessage(id))
-let chat = global.db.data.chats[msg?.chat] || {}
-if (!chat?.delete) return 
-if (!msg) return 
-let isGP = remoteJid.endsWith('@g.us') || remoteJid.endsWith('@s.whatsapp.net')
-if (!isGP) return
-let userDelete = `${participant.split`@`[0]}`
-await this.sendMessage(remoteJid, { text: lenguajeGB['smsAntiEliminar'](userDelete).trim(), mentions: [participant] }, { quoted: msg })
-this.copyNForward(remoteJid, msg).catch(e => console.log(e, msg))
-} catch (e) {
-console.error(e)
-}}*/
-
 export async function deleteUpdate(message) {
 try {
 const { fromMe, id, participant } = message
