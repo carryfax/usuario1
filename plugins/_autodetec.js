@@ -11,8 +11,6 @@ let usuario = `@${m.sender.split`@`[0]}`
 let inf = lenguajeGB['smsAvisoIIG']()
 	
 if (!m.messageStubType || !m.isGroup || !chat.detect) return
-	
-//const fkontak = { "key": { "participants":"0@s.whatsapp.net", "remoteJid": "status@broadcast", "fromMe": false, "id": "Halo" }, "message": { "contactMessage": { "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD` }}, "participant": "0@s.whatsapp.net"}  
 
 let nombre, foto, edit, newlink, status, admingp, noadmingp
 nombre = lenguajeGB.smsAutodetec1(inf, usuario, m)
@@ -23,20 +21,14 @@ status = lenguajeGB.smsAutodetec5(inf, groupMetadata, m, usuario)
 admingp = lenguajeGB.smsAutodetec6(inf, m, groupMetadata, usuario)
 noadmingp = lenguajeGB.smsAutodetec7(inf, m, groupMetadata, usuario)
 
-if (m.messageStubType === 21) {
-await conn.sendMessage(m.chat, { text: nombre, mentions: [m.sender] }, { quoted: fkontak })   
-
-} else if (m.messageStubType === 145) {
-let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
-let mensaje = `🔔 *Modo de aprobación para unirse al grupo ha sido ${status}.*`
-await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
-console.log(mensaje)
+if (m.messageStubType === 21) { // Anunciar nuevo nombre del grupo
+await conn.sendMessage(m.chat, { text: nombre, mentions: [m.sender] })   
   
-} else if (m.messageStubType === 22) {
-let pp = await conn.profilePictureUrl(m.messageStubParameters[0], 'image').catch(_ => gataMenu)
-await conn.sendMessage(m.chat, { image: { url: pp }, caption: foto, mentions: [m.sender] }, { quoted: fkontak })
+} else if (m.messageStubType === 22) { // Nueva foto del grupo
+let pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => gataMenu)
+await conn.sendMessage(m.chat, { image: { url: pp }, caption: foto, mentions: [m.sender] })
 
-} else if (m.messageStubType === 23) {
+} else if (m.messageStubType === 23) { // Nuevo enlace del grupo
 await conn.sendMessage(m.chat, { text: newlink, mentions: [m.sender] }, { quoted: fkontak })    
 
 } else if (m.messageStubType === 25) {
@@ -78,9 +70,12 @@ console.error(`Error al aprobar la solicitud de ${usersConPrefijo}:`, error);
 } else if (m.messageStubType === 30) {
 await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }, { quoted: fkontak })  
 
+} else if (m.messageStubType === 145) {
+let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
+let mensaje = `🔔 *Modo de aprobación para unirse al grupo ha sido ${status}.*`
+await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
+console.log(mensaje)
+
 } else {
-console.log({ messageStubType: m.messageStubType,
-messageStubParameters: m.messageStubParameters,
-type: WAMessageStubType[m.messageStubType], 
-})
+console.log({ messageStubType: m.messageStubType, messageStubParameters: m.messageStubParameters, type: WAMessageStubType[m.messageStubType] })
 }}
