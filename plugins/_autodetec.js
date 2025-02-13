@@ -1,8 +1,8 @@
 let WAMessageStubType = (await import(global.baileys)).default
 
-//export async function before(m, { conn, participants, groupMetadata }) {
-let handler = m => m
-handler.all = async function (m, { conn, participants, groupMetadata }) {
+export async function before(m, { conn, participants, groupMetadata }) {
+//let handler = m => m
+//handler.all = async function (m, { conn, participants, groupMetadata }) {
 console.log({ messageStubType: m.messageStubType,
 messageStubParameters: m.messageStubParameters,
 type: WAMessageStubType[m.messageStubType], 
@@ -88,4 +88,3 @@ messageStubParameters: m.messageStubParameters,
 type: WAMessageStubType[m.messageStubType], 
 })
 }}
-export default handler
