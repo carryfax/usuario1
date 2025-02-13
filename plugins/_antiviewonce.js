@@ -1,47 +1,39 @@
-import { downloadContentFromMessage } from "@whiskeysockets/baileys";
-
 export async function before(m) {
-    //if (m.isBaileys && m.fromMe) return true;
-   // if (!m.isGroup) return false;
-console.log("Contenido del mensaje:", JSON.stringify(m.message, null, 2));
-    // Verificar si el mensaje contiene un archivo "viewOnce"
-    if (m.message && m.message.viewOnceMessage) {
-        const viewOnceMsg = m.message.viewOnceMessage.message;
+   // if (m.isBaileys && m.fromMe) return true;
+    //if (!m.isGroup) return false;
 
-        try {
-            const mediaType = Object.keys(viewOnceMsg)[0]; // Tipo de archivo, por ejemplo "imageMessage"
-            if (!mediaType) return console.log("⛔ No se detectó tipo de archivo");
+    // Depuración para verificar todo el contenido del mensaje
+    console.log("Contenido del mensaje:", JSON.stringify(m.mtype, null, 2));
 
-            const media = viewOnceMsg[mediaType];
-            if (!media.viewOnce) return console.log("⛔ No es un mensaje de 'ver una vez'.");
+    if (m.mtype === "imageMessage") {
+        const imageMessage = m.message.imageMessage;
+        if (imageMessage.viewOnce) {
+            console.log("⛔ El mensaje es de tipo 'viewOnce'.");
 
-            const type = mediaType.includes("image") ? "image" : mediaType.includes("video") ? "video" : null;
-            if (!type) return console.log("⛔ Tipo de archivo no soportado");
+            try {
+                const mediaType = "image"; // Sabemos que es una imagen
+                const stream = await downloadContentFromMessage(imageMessage, mediaType);
+                let buffer = Buffer.from([]);
+                for await (const chunk of stream) {
+                    buffer = Buffer.concat([buffer, chunk]);
+                }
 
-            console.log(`📥 Descargando ${type}...`);
-            const stream = await downloadContentFromMessage(media, type);
-            let buffer = Buffer.from([]);
-            for await (const chunk of stream) {
-                buffer = Buffer.concat([buffer, chunk]);
-            }
+                const fileSize = formatFileSize(imageMessage.fileLength);
+                const timestamp = getMakassarTimestamp(imageMessage.mediaKeyTimestamp);
+                const description = `🚫 *Anti-ViewOnce*\n📁 *Tipo:* ${mediaType}\n📝 *Caption:* ${imageMessage.caption || "N/A"}\n📏 *Tamaño:* ${fileSize}\n⏰ *Hora:* ${timestamp}\n👤 *Enviado por:* @${m.sender.split("@")[0]}`;
 
-            const fileSize = formatFileSize(media.fileLength);
-            const timestamp = getMakassarTimestamp(media.mediaKeyTimestamp);
-            const description = `🚫 *Anti-ViewOnce*\n📁 *Tipo:* ${type}\n📝 *Caption:* ${media.caption || "N/A"}\n📏 *Tamaño:* ${fileSize}\n⏰ *Hora:* ${timestamp}\n👤 *Enviado por:* @${m.sender.split("@")[0]}`;
-
-            // ✅ Enviar la imagen o video recuperado
-            if (type === "image") {
+                // ✅ Enviar la imagen recuperada
                 await this.sendFile(m.chat, buffer, "image.jpg", description, m, false, { mentions: [m.sender] });
-            } else if (type === "video") {
-                await this.sendFile(m.chat, buffer, "video.mp4", description, m, false, { mentions: [m.sender] });
-            }
 
-            console.log(`✅ ${type} enviado con éxito.`);
-        } catch (error) {
-            console.error("❌ Error al procesar el mensaje de 'ver una vez':", error);
+                console.log(`✅ Imagen enviada con éxito.`);
+            } catch (error) {
+                console.error("❌ Error al procesar el mensaje 'viewOnce' de imagen:", error);
+            }
+        } else {
+            console.log("⛔ El mensaje no tiene el flag 'viewOnce'.");
         }
     } else {
-        console.log("⛔ No se detectó un mensaje 'viewOnce'.");
+        console.log("⛔ El mensaje no es de tipo 'imageMessage'.");
     }
 }
 
