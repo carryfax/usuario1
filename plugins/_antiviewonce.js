@@ -3,7 +3,7 @@ import { downloadContentFromMessage } from "@whiskeysockets/baileys";
 export async function before(m) {
     //if (m.isBaileys && m.fromMe) return true;
    // if (!m.isGroup) return false;
-
+console.log("Contenido del mensaje:", JSON.stringify(m.message, null, 2));
     // Verificar si el mensaje contiene un archivo "viewOnce"
     if (m.message && m.message.viewOnceMessage) {
         const viewOnceMsg = m.message.viewOnceMessage.message;
