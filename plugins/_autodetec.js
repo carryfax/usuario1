@@ -1,5 +1,7 @@
 let WAMessageStubType = (await import(global.baileys)).default
 export async function before(m, { conn, participants, groupMetadata }) {
+console.log({ messageStubType: m.messageStubType, messageStubParameters: m.messageStubParameters, type: WAMessageStubType[m.messageStubType] })
+	
 let chat = global.db.data.chats[m.chat] 
 let usuario = `@${m.sender.split`@`[0]}`
 let inf = lenguajeGB['smsAvisoIIG']()
