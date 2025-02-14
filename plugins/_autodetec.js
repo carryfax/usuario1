@@ -61,10 +61,10 @@ await conn.sendMessage(m.chat, { text: mensaje, mentions: [usuario] })
 
 if (!chat.antifake) {
 try {
-await conn.groupRequestParticipantsUpdate(m.chat, [rawUser], 'reject');
-console.log(`Solicitud de ingreso de @${users} rechazada automáticamente por tener un prefijo prohibido.`);
+await conn.groupRequestParticipantsUpdate(m.chat, [rawUser], 'reject')
+console.log(`Solicitud de ingreso de @${users} rechazada automáticamente por tener un prefijo prohibido.`)
 } catch (error) {
-console.error(`Error al rechazar la solicitud de ${usersConPrefijo}:`, error);
+console.error(`Error al rechazar la solicitud de ${usersConPrefijo}:`, error)
 }
  
 }
