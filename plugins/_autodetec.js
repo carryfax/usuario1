@@ -1,10 +1,6 @@
 let WAMessageStubType = (await import(global.baileys)).default
 export async function before(m, { conn, participants, groupMetadata }) {
-
-console.log({ messageStubType: m.messageStubType,
-messageStubParameters: m.messageStubParameters,
-type: WAMessageStubType[m.messageStubType], 
-})
+console.log({ messageStubType: m.messageStubType, messageStubParameters: m.messageStubParameters, type: WAMessageStubType[m.messageStubType]})
 	
 let chat = global.db.data.chats[m.chat] 
 let usuario = `@${m.sender.split`@`[0]}`
@@ -66,7 +62,7 @@ await conn.sendMessage(m.chat, { text: mensaje, mentions: [usuario] })
 if (!chat.antifake) {
 try {
 await conn.groupRequestParticipantsUpdate(m.chat, [usuario], 'approve')
-await conn.sendMessage(m.chat, { text: `Solicitud de ingreso de @${usuario} aprobada automáticamente ya que el anti fake está desactivado.`, mentions: [usuario] })
+await conn.sendMessage(m.chat, { text: `Solicitud de ingreso de @${usuario.split('@')[0]} aprobada automáticamente ya que el anti fake está desactivado.`, mentions: [usuario] })
 } catch (error) {
 console.error(`Error al aprobar la solicitud de ${usuario}: `, error)
 }}
