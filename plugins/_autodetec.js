@@ -50,9 +50,26 @@ await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.
 
 } else if (m.messageStubType === 171) {
 let all_member_add = m.messageStubParameters[0] === 'all_member_add' ? "✅ *Ahora todos pueden añadir usuarios.*" : "⚠ *Ahora solo los administradores pueden añadir usuarios.*"
-await conn.sendMessage(m.chat, { text: all_member_add, mentions: [m.sender] })  
-	
-} else if (m.messageStubType === 172 && m.messageStubParameters.length > 0) {
+await conn.sendMessage(m.chat, { text: all_member_add, mentions: [m.sender] }) 
+
+} else if (m.messageStubType === 172 && botIsAdminCommunity) {
+let usuario = m.messageStubParameters[0]
+let metodo = m.messageStubParameters[2] === 'invite_link' ? 'un enlace de invitación' : 'un grupo vinculado a la comunidad'
+let mensaje = `🚪 @${usuario.split('@')[0]} ha solicitado unirse al grupo mediante ${metodo}.`
+    
+await conn.sendMessage(m.chat, { text: mensaje, mentions: [usuario] })
+
+if (!chat.antifake) {
+try {
+await conn.groupRequestParticipantsUpdate(m.chat, [rawUser], 'reject');
+console.log(`Solicitud de ingreso de @${users} rechazada automáticamente por tener un prefijo prohibido.`);
+} catch (error) {
+console.error(`Error al rechazar la solicitud de ${usersConPrefijo}:`, error);
+}
+ 
+}
+
+/*} else if (m.messageStubType === 172 && m.messageStubParameters.length > 0) {
 const rawUser = m.messageStubParameters[0]
 const users = rawUser.split('@')[0]
 const prefijosProhibidos = ['91', '92', '222', '93', '265', '61', '62', '966', '229', '40', '49', '20', '963', '967', '234', '210', '212'];
@@ -77,7 +94,7 @@ await conn.groupRequestParticipantsUpdate(m.chat, [rawUser], 'approve');
 console.log(`Solicitud de ingreso de @${users} aprobada automáticamente ya que #antifake está desactivado.`);
 } catch (error) {
 console.error(`Error al aprobar la solicitud de ${usersConPrefijo}:`, error);
-}} 
+}} */
 
 } else if (m.messageStubType === 145) {
 let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
