@@ -48,26 +48,28 @@ await conn.sendMessage(m.chat, { text: admingp, mentions: [`${m.sender}`,`${m.me
 } else if (m.messageStubType === 30) { // Detectar revocación de admin
 await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }) 
 
+} else if (m.messageStubType === 145) {
+let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
+let mensaje = `🔔 *Modo de aprobación para unirse al grupo ha sido ${status}.*`
+await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
+
 } else if (m.messageStubType === 171) {
 let all_member_add = m.messageStubParameters[0] === 'all_member_add' ? "✅ *Ahora todos pueden añadir usuarios.*" : "⚠ *Ahora solo los administradores pueden añadir usuarios.*"
 await conn.sendMessage(m.chat, { text: all_member_add, mentions: [m.sender] }) 
 
 } else if (m.messageStubType === 172 && botIsAdminCommunity) {
+console.log(`Bot: ${botIsAdminCommunity}`)
 let usuario = m.messageStubParameters[0]
 let metodo = m.messageStubParameters[2] === 'invite_link' ? 'un enlace de invitación' : 'un grupo vinculado a la comunidad'
-let mensaje = `🚪 @${usuario.split('@')[0]} ha solicitado unirse al grupo mediante ${metodo}.`
-    
+let mensaje = `🚪 @${usuario.split('@')[0]} ha solicitado unirse mediante ${metodo}.`
 await conn.sendMessage(m.chat, { text: mensaje, mentions: [usuario] })
-
 if (!chat.antifake) {
 try {
-await conn.groupRequestParticipantsUpdate(m.chat, [rawUser], 'reject')
-console.log(`Solicitud de ingreso de @${users} rechazada automáticamente por tener un prefijo prohibido.`)
+await conn.groupRequestParticipantsUpdate(m.chat, [usuario], 'approve')
+await conn.sendMessage(m.chat, { text: `Solicitud de ingreso de @${usuario} aprobada automáticamente ya que el anti fake está desactivado.`, mentions: [usuario] })
 } catch (error) {
-console.error(`Error al rechazar la solicitud de ${usersConPrefijo}:`, error)
-}
- 
-}
+console.error(`Error al aprobar la solicitud de ${usuario}: `, error)
+}}
 
 /*} else if (m.messageStubType === 172 && m.messageStubParameters.length > 0) {
 const rawUser = m.messageStubParameters[0]
@@ -95,12 +97,6 @@ console.log(`Solicitud de ingreso de @${users} aprobada automáticamente ya que 
 } catch (error) {
 console.error(`Error al aprobar la solicitud de ${usersConPrefijo}:`, error);
 }} */
-
-} else if (m.messageStubType === 145) {
-let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
-let mensaje = `🔔 *Modo de aprobación para unirse al grupo ha sido ${status}.*`
-await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
-console.log(mensaje)
 
 } else {
 console.log({ messageStubType: m.messageStubType, messageStubParameters: m.messageStubParameters, type: WAMessageStubType[m.messageStubType] })
