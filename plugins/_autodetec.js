@@ -51,7 +51,7 @@ await conn.sendMessage(m.chat, { text: admingp, mentions: [`${m.sender}`,`${m.me
 await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }) 
 
 } else if (m.messageStubType === 171) {
-let all_member_add = m.messageStubParameters[0] === 'all_member_add' ? "✅ *Todos pueden añadir usuarios a la comunidad.*" : "⚠ *Solo los administradores pueden añadir usuarios a la comunidad.*"
+let all_member_add = m.messageStubParameters[0] === 'all_member_add' ? "✅ *Ahora todos pueden añadir usuarios.*" : "⚠ *Ahora solo los administradores pueden añadir usuarios.*"
 await conn.sendMessage(m.chat, { text: all_member_add, mentions: [m.sender] })  
 	
 } else if (m.messageStubType === 172 && m.messageStubParameters.length > 0) {
