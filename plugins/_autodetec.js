@@ -20,7 +20,7 @@ await conn.sendMessage(m.chat, { image: { url: pp }, caption: lenguajeGB.smsAuto
 await conn.sendMessage(m.chat, { text: lenguajeGB.smsAutodetec4(inf, groupMetadata, usuario), mentions: [m.sender] })    
 
 } else if (m.messageStubType === 24) { // Detectar una nueva descripción 
-let mensaje = `📝 *La descripción del grupo ha sido actualizada. La nueva descripción es:*\n\n${m.messageStubParameters[0]}`
+let mensaje = `📝 *La descripción de este chat ha sido actualizada. La nueva descripción es:*\n\n${m.messageStubParameters[0]}`
 await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
 
 } else if (m.messageStubType === 25) { // Permitir o no configurar el grupo [on/off]
