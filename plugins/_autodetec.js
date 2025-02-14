@@ -49,6 +49,10 @@ await conn.sendMessage(m.chat, { text: admingp, mentions: [`${m.sender}`,`${m.me
 
 } else if (m.messageStubType === 30) { // Detectar revocación de admin
 await conn.sendMessage(m.chat, { text: noadmingp, mentions: [`${m.sender}`,`${m.messageStubParameters[0]}`] }) 
+
+} else if (m.messageStubType === 171) {
+let all_member_add = m.messageStubParameters[0] === 'all_member_add' ? "✅ *Todos pueden añadir usuarios a la comunidad.*" : "⚠ *Solo los administradores pueden añadir usuarios a la comunidad.*"
+await conn.sendMessage(m.chat, { text: all_member_add, mentions: [m.sender] })  
 	
 } else if (m.messageStubType === 172 && m.messageStubParameters.length > 0) {
 const rawUser = m.messageStubParameters[0]
@@ -82,11 +86,6 @@ let status = m.messageStubParameters[0] === 'on' ? 'activado' : 'desactivado';
 let mensaje = `🔔 *Modo de aprobación para unirse al grupo ha sido ${status}.*`
 await conn.sendMessage(m.chat, { text: mensaje, mentions: [m.sender] })
 console.log(mensaje)
-
-// Para comunidades
-} else if (m.messageStubType === 171 && botIsAdminCommunity && groupMetadata.isCommunityAnnounce) {
-let all_member_add = m.messageStubParameters[0] === 'all_member_add' ? "✅ *Todos pueden añadir usuarios a la comunidad.*" : "⚠ *Solo los administradores pueden añadir usuarios a la comunidad.*"
-await conn.sendMessage(m.chat, { text: all_member_add, mentions: [m.sender] })  
 
 } else {
 console.log({ messageStubType: m.messageStubType, messageStubParameters: m.messageStubParameters, type: WAMessageStubType[m.messageStubType] })
